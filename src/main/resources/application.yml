@@ -1,0 +1,16 @@
+server:
+  port: 8080
+  tomcat:
+    max-swallow-size: -1
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 200MB
+  thymeleaf:
+    cache: false
+
+logging:
+  level:
+    com.dental.analyzer: DEBUG

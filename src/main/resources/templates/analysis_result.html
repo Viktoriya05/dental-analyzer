@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Результат</title>
+    <style>
+        body { font-family: Arial; margin: 40px; background: #f4f4f4; }
+        .card { background: white; padding: 24px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #4CAF50; color: white; }
+        .stat-row { font-size: 16px; margin-bottom: 8px; }
+        .stat-row .stat-value { color: #2196F3; font-weight: bold; }
+        .download-btn { padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .sheet-block { margin-top: 12px; padding: 12px; border-left: 4px solid #2196F3; background: #f9f9f9; }
+        .sheet-title { font-weight: bold; margin-bottom: 6px; }
+        .sources { font-size: 14px; color: #555; }
+    </style>
+</head>
+<body>
+<h1 th:text="${result.title}"></h1>
+<p>Лист: <strong th:text="${sheetName}"></strong></p>
+
+<div class="card">
+    <p th:text="${result.summary}" style="color: #666; font-style: italic;"></p>
+    <hr>
+
+    <!-- Общая статистика -->
+    <div class="stat-row" th:each="stat : ${result.stats}">
+        <span th:text="${stat.key}"></span>:
+        <span class="stat-value" th:text="${stat.value}"></span>
+    </div>
+
+    <!-- Список источников -->
+    <div th:if="${not #lists.isEmpty(result.sourceSheets)}" class="sources">
+        <strong>Источники:</strong>
+        <ul>
+            <li th:each="s : ${result.sourceSheets}" th:text="${s}"></li>
+        </ul>
+    </div>
+</div>
+
+<!-- Разбивка по листам -->
+<div class="card" th:if="${not #maps.isEmpty(result.perSheetStats)}">
+    <h3>Разбивка по листам</h3>
+    <div th:each="sheetEntry : ${result.perSheetStats}" class="sheet-block">
+        <div class="sheet-title" th:text="${sheetEntry.key}"></div>
+        <div class="stat-row" th:each="st : ${sheetEntry.value}">
+            <span th:text="${st.key}"></span>:
+            <span class="stat-value" th:text="${st.value}"></span>
+        </div>
+    </div>
+</div>
+
+<!-- Детализация -->
+<div class="card" th:if="${not #lists.isEmpty(result.tableData)}">
+    <h3>Детализация</h3>
+    <table>
+        <thead>
+        <tr>
+            <th th:each="header : ${result.tableHeaders}" th:text="${header}"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="row : ${result.tableData}">
+            <td th:each="cell : ${row}" th:text="${cell}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Кнопка скачивания результата в Excel -->
+<form action="/download" method="post" style="margin-top: 20px;">
+    <input type="hidden" name="sheetsCsv" th:value="${sheetsCsv}">
+    <input type="hidden" name="analysisType" th:value="${analysisType}">
+    <button type="submit" class="download-btn">💾 Скачать результат в Excel</button>
+</form>
+
+<p><a href="/">← На главную</a></p>
+</body>
+</html>

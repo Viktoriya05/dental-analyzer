@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Выбор листов</title>
+    <style>
+        body { font-family: Arial; margin: 40px; background: #f4f4f4; }
+        table { border-collapse: collapse; width: 100%; background: white; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #f2f2f2; }
+        .btn { padding: 10px 20px; background: #4CAF50; color: white; text-decoration: none; border-radius: 4px; border: none; cursor: pointer; }
+        .toolbar { margin-top: 15px; }
+        label { cursor: pointer; }
+        .error { color: red; background: #ffebee; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+<h2>Доступные файлы и листы</h2>
+<p><a href="/">← Назад</a></p>
+<div th:if="${error}" class="error" th:text="${error}"></div>
+
+<form method="post" action="/analyze-multi">
+    <table>
+        <thead>
+        <tr>
+            <th style="width:40px;"><input type="checkbox" id="selectAll" onclick="toggleAll(this)"></th>
+            <th>Файл</th>
+            <th>Лист</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="sheet : ${sheets}">
+            <td>
+                <input type="checkbox" name="sheets"
+                       th:value="${sheet.fileName + '::' + sheet.sheetName}">
+            </td>
+            <td th:text="${sheet.fileName}"></td>
+            <td th:text="${sheet.sheetName}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="toolbar">
+        <button type="submit" class="btn">Анализировать выбранные листы →</button>
+    </div>
+</form>
+
+<script>
+    function toggleAll(box) {
+        document.querySelectorAll('input[name="sheets"]').forEach(cb => cb.checked = box.checked);
+    }
+</script>
+</body>
+</html>
